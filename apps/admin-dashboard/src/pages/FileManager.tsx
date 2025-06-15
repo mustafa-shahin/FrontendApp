@@ -13,14 +13,7 @@ import { FileEditDialog } from '../components/ui/files/FileEditDialog';
 import { FolderEditDialog } from '../components/ui/files/FolderEditDialog';
 import { Dialog } from '../components/ui/Dialog';
 import { Modal } from '../components/ui/Modal';
-import {
-  FileEntity,
-  Folder,
-  ViewMode,
-  BreadcrumbItem,
-  ContextMenuItem,
-  FileType,
-} from '../types';
+import { FileDto, Folder, BreadcrumbItem, ContextMenuItem } from '../types';
 import { fileService } from '../services/file.service';
 import { folderService } from '../services/folder.service';
 import { useFileManager } from '../contexts/FileManagerContext';
@@ -39,10 +32,10 @@ export const FileManager: React.FC = () => {
     setIsLoading,
   } = useFileManager();
 
-  const [files, setFiles] = useState<FileEntity[]>([]);
+  const [files, setFiles] = useState<FileDto[]>([]);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
-  const [editingFile, setEditingFile] = useState<FileEntity | null>(null);
+  const [editingFile, setEditingFile] = useState<FileDto | null>(null);
   const [editingFolder, setEditingFolder] = useState<Folder | undefined>(
     undefined
   );
@@ -109,7 +102,7 @@ export const FileManager: React.FC = () => {
     }
   };
 
-  const handleItemSelect = (item: FileEntity | Folder) => {
+  const handleItemSelect = (item: FileDto | Folder) => {
     setSelectedItems((prev) => {
       const isSelected = prev.some((selected) => selected.id === item.id);
       if (isSelected) {
@@ -120,7 +113,7 @@ export const FileManager: React.FC = () => {
     });
   };
 
-  const handleItemDoubleClick = (item: FileEntity | Folder) => {
+  const handleItemDoubleClick = (item: FileDto | Folder) => {
     if ('subFolders' in item) {
       // It's a folder
       setCurrentFolder(item);
@@ -132,7 +125,7 @@ export const FileManager: React.FC = () => {
   };
 
   const handleItemContextMenu = (
-    item: FileEntity | Folder,
+    item: FileDto | Folder,
     event: React.MouseEvent
   ) => {
     event.preventDefault();
@@ -167,7 +160,9 @@ export const FileManager: React.FC = () => {
         id: 'separator1',
         label: '',
         icon: '',
-        action: () => {},
+        action: () => {
+          console.log('Separator 1');
+        },
         separator: true,
       },
       {

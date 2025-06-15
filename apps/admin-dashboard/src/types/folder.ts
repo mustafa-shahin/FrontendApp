@@ -1,4 +1,4 @@
-import { FileDto, FileEntity, FileType, FolderType } from './index';
+import { FileDto, FileType, FolderType } from './index';
 export interface Folder {
   id: number;
   name: string;
@@ -7,7 +7,7 @@ export interface Folder {
   parentFolderId?: number;
   parentFolderPath?: string;
   subFolders: Folder[];
-  files: FileEntity[];
+  files: FileDto[];
   isPublic: boolean;
   metadata: Record<string, any>;
   folderType: FolderType;

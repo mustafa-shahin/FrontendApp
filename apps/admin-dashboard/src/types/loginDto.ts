@@ -1,4 +1,4 @@
-import { User } from './index';
+import { UserDto } from './index';
 
 export interface LoginDto {
   email: string;
@@ -11,6 +11,6 @@ export interface LoginResponseDto {
   accessToken: string;
   refreshToken: string;
   expiresAt: string;
-  user: User;
+  user: UserDto;
   requiresTwoFactor: boolean;
 }

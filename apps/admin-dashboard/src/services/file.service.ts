@@ -1,5 +1,5 @@
 import {
-  FileEntity,
+  FileDto,
   FileUploadDto,
   UpdateFileDto,
   FileSearchDto,
@@ -8,11 +8,11 @@ import {
   CopyFileDto,
 } from '../types';
 import { apiService } from './api.service';
-
+import { environment } from '../config/environment';
 class FileService {
   async getFiles(
     searchParams?: Partial<FileSearchDto>
-  ): Promise<PagedResult<FileEntity>> {
+  ): Promise<PagedResult<FileDto>> {
     const params = new URLSearchParams();
 
     if (searchParams) {
@@ -28,16 +28,16 @@ class FileService {
     }
 
     const query = params.toString();
-    return apiService.get<PagedResult<FileEntity>>(
+    return apiService.get<PagedResult<FileDto>>(
       `/file${query ? `?${query}` : ''}`
     );
   }
 
-  async getFileById(id: number): Promise<FileEntity> {
-    return apiService.get<FileEntity>(`/file/${id}`);
+  async getFileById(id: number): Promise<FileDto> {
+    return apiService.get<FileDto>(`/file/${id}`);
   }
 
-  async uploadFile(uploadData: FileUploadDto): Promise<FileEntity> {
+  async uploadFile(uploadData: FileUploadDto): Promise<FileDto> {
     const formData = new FormData();
     formData.append('file', uploadData.file);
 
@@ -53,14 +53,14 @@ class FileService {
     );
     formData.append('tags', JSON.stringify(uploadData.tags));
 
-    return apiService.uploadFile<FileEntity>('/file/upload', formData);
+    return apiService.uploadFile<FileDto>('/file/upload', formData);
   }
 
   async uploadMultipleFiles(
     files: File[],
     folderId?: number,
     isPublic = false
-  ): Promise<FileEntity[]> {
+  ): Promise<FileDto[]> {
     const formData = new FormData();
 
     files.forEach((file) => {
@@ -71,14 +71,11 @@ class FileService {
     formData.append('isPublic', isPublic.toString());
     formData.append('generateThumbnails', 'true');
 
-    return apiService.uploadFile<FileEntity[]>(
-      '/file/upload/multiple',
-      formData
-    );
+    return apiService.uploadFile<FileDto[]>('/file/upload/multiple', formData);
   }
 
-  async updateFile(id: number, updateData: UpdateFileDto): Promise<FileEntity> {
-    return apiService.put<FileEntity>(`/file/${id}`, updateData);
+  async updateFile(id: number, updateData: UpdateFileDto): Promise<FileDto> {
+    return apiService.put<FileDto>(`/file/${id}`, updateData);
   }
 
   async deleteFile(id: number): Promise<void> {
@@ -87,20 +84,20 @@ class FileService {
     });
   }
 
-  async moveFile(moveData: MoveFileDto): Promise<FileEntity> {
-    return apiService.post<FileEntity>('/file/move', moveData);
+  async moveFile(moveData: MoveFileDto): Promise<FileDto> {
+    return apiService.post<FileDto>('/file/move', moveData);
   }
 
-  async copyFile(copyData: CopyFileDto): Promise<FileEntity> {
-    return apiService.post<FileEntity>('/file/copy', copyData);
+  async copyFile(copyData: CopyFileDto): Promise<FileDto> {
+    return apiService.post<FileDto>('/file/copy', copyData);
   }
 
-  async searchFiles(searchData: FileSearchDto): Promise<FileEntity[]> {
-    return apiService.post<FileEntity[]>('/file/search', searchData);
+  async searchFiles(searchData: FileSearchDto): Promise<FileDto[]> {
+    return apiService.post<FileDto[]>('/file/search', searchData);
   }
 
-  async getRecentFiles(count = 10): Promise<FileEntity[]> {
-    return apiService.get<FileEntity[]>(`/file/recent?count=${count}`);
+  async getRecentFiles(count = 10): Promise<FileDto[]> {
+    return apiService.get<FileDto[]>(`/file/recent?count=${count}`);
   }
 
   async getFileStatistics(): Promise<Record<string, any>> {
@@ -128,8 +125,8 @@ class FileService {
   async bulkCopyFiles(
     fileIds: number[],
     destinationFolderId?: number
-  ): Promise<FileEntity[]> {
-    return apiService.post<FileEntity[]>('/file/bulk-copy', {
+  ): Promise<FileDto[]> {
+    return apiService.post<FileDto[]>('/file/bulk-copy', {
       fileIds,
       destinationFolderId,
     });
@@ -141,6 +138,27 @@ class FileService {
 
   getThumbnailUrl(fileId: number): string {
     return apiService.getThumbnailUrl(fileId);
+  }
+  getAvatarUrl(user: {
+    avatarFileId?: number | null;
+    firstName?: string;
+    lastName?: string;
+  }): string | null {
+    if (user.avatarFileId && user.avatarFileId > 0) {
+      return this.getImageUrl(user.avatarFileId, 'download');
+    }
+    return null;
+  }
+  getImageUrl(
+    fileId: number | null | undefined,
+    type: 'download' | 'thumbnail' = 'download'
+  ): string | null {
+    if (!fileId || fileId <= 0) return null;
+    if (type === 'thumbnail') {
+      return this.getThumbnailUrl(fileId);
+    } else {
+      return this.getDownloadUrl(fileId);
+    }
   }
 }
 

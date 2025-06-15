@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { Button } from '../Button';
+import { fileService } from '../../../services/file.service';
 interface HeaderProps {
   onToggleSidebar: () => void;
 }
@@ -49,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
           <div className="flex items-center space-x-3">
             {user?.avatarUrl ? (
               <img
-                src={user.avatarUrl}
+                src={fileService.getAvatarUrl(user)?.toString()}
                 alt={user.fullName}
                 className="w-8 h-8 rounded-full"
               />

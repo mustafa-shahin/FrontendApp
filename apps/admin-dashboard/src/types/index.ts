@@ -1,6 +1,6 @@
 export * from './apiResponse';
 export * from './common';
-export * from './contactDetails';
+export * from './contactDetail';
 export * from './file';
 export * from './folder';
 export * from './loginDto';
@@ -8,4 +8,3 @@ export * from './pagedResult';
 export * from './user';
 export * from './adress';
 export * from './enums';
-export * from './baseEntity';

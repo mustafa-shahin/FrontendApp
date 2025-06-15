@@ -1,18 +1,3 @@
-import { BaseEntity } from './baseEntity';
-
-export interface Address extends BaseEntity {
-  street: string;
-  street2: string | null;
-  city: string;
-  state: string;
-  country: string;
-  postalCode: string;
-  region: string | null;
-  district: string | null;
-  isDefault: boolean;
-  addressType: string | null;
-  notes: string | null;
-}
 export interface AddressDto {
   id: number;
   street: string;

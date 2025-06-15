@@ -16,7 +16,7 @@ import { Dialog } from '../components/ui/Dialog';
 import { Modal } from '../components/ui/Modal';
 import { Toast } from '../components/ui/Toast';
 import {
-  FileEntity,
+  FileDto,
   Folder,
   ViewMode,
   BreadcrumbItem,
@@ -87,7 +87,7 @@ export const UpdatedFileManager: React.FC = () => {
 
   // Local state
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
-  const [editingFile, setEditingFile] = useState<FileEntity | null>(null);
+  const [editingFile, setEditingFile] = useState<FileDto | null>(null);
   const [editingFolder, setEditingFolder] = useState<Folder | undefined>(
     undefined
   );
@@ -155,7 +155,7 @@ export const UpdatedFileManager: React.FC = () => {
     }
   };
 
-  const handleItemSelect = (item: FileEntity | Folder) => {
+  const handleItemSelect = (item: FileDto | Folder) => {
     setSelectedItems((prev) => {
       const isSelected = prev.some((selected) => selected.id === item.id);
       if (isSelected) {
@@ -166,7 +166,7 @@ export const UpdatedFileManager: React.FC = () => {
     });
   };
 
-  const handleItemDoubleClick = (item: FileEntity | Folder) => {
+  const handleItemDoubleClick = (item: FileDto | Folder) => {
     if ('subFolders' in item) {
       // It's a folder - navigate to it
       window.location.href = `/files/folder/${item.id}`;
@@ -177,7 +177,7 @@ export const UpdatedFileManager: React.FC = () => {
   };
 
   const handleItemContextMenu = (
-    item: FileEntity | Folder,
+    item: FileDto | Folder,
     event: React.MouseEvent
   ) => {
     event.preventDefault();
@@ -212,8 +212,10 @@ export const UpdatedFileManager: React.FC = () => {
         id: 'separator1',
         label: '',
         icon: '',
-        action: () => {},
         separator: true,
+        action: () => {
+          console.log('Separator clicked');
+        },
       },
       {
         id: 'delete',

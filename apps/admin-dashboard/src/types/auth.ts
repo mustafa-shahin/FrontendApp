@@ -1,6 +1,3 @@
-import { BaseEntity } from './baseEntity';
-import { User } from './user';
-
 export interface ForgotPasswordDto {
   email: string;
 }
@@ -25,14 +22,4 @@ export interface RegisterDto {
   password: string;
   firstName: string;
   lastName: string;
-}
-export interface PasswordResetToken extends BaseEntity {
-  userId: number;
-  user: User;
-  token: string;
-  expiresAt: string;
-  isUsed: boolean;
-  usedAt: string | null;
-  ipAddress: string | null;
-  userAgent: string | null;
 }

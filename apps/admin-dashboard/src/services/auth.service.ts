@@ -1,4 +1,4 @@
-import { LoginDto, LoginResponseDto, User, RefreshTokenDto } from '../types';
+import { LoginDto, LoginResponseDto, UserDto, RefreshTokenDto } from '../types';
 import { apiService } from './api.service';
 
 class AuthService {
@@ -16,8 +16,8 @@ class AuthService {
     return apiService.post<LoginResponseDto>('/auth/refresh', refreshTokenDto);
   }
 
-  async getCurrentUser(): Promise<User> {
-    return apiService.get<User>('/auth/me');
+  async getCurrentUser(): Promise<UserDto> {
+    return apiService.get<UserDto>('/auth/me');
   }
 
   async generateDownloadToken(

@@ -1,29 +1,4 @@
 import { FileType } from './index';
-export interface FileEntity {
-  id: number;
-  originalFileName: string;
-  storedFileName: string;
-  contentType: string;
-  fileSize: number;
-  fileExtension: string;
-  fileType: FileType;
-  description?: string;
-  alt?: string;
-  metadata: Record<string, any>;
-  isPublic: boolean;
-  folderId?: number;
-  downloadCount: number;
-  lastAccessedAt?: string;
-  width?: number;
-  height?: number;
-  duration?: string;
-  hash?: string;
-  isProcessed: boolean;
-  processingStatus?: string;
-  tags: Record<string, any>;
-  createdAt: string;
-  updatedAt: string;
-}
 export interface FileUploadDto {
   file: File;
   description?: string;

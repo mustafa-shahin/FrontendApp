@@ -8,41 +8,25 @@ import { Modal } from '../components/ui/Modal';
 import { Select } from '../components/ui/Select';
 import { Checkbox } from '../components/ui/Checkbox';
 import { Dialog } from '../components/ui/Dialog';
-import { User, CreateUserDto, UserRole } from '../types';
+import {
+  User,
+  CreateUserDto,
+  UserRole,
+  UserListDto,
+  PagedResult,
+} from '../types/';
+import { apiService } from '../services/api.service';
 
-const mockUsers: User[] = [
-  {
-    id: 1,
-    email: 'admin@demo.com',
-    username: 'admin',
-    firstName: 'Admin',
-    lastName: 'User',
-    isActive: true,
-    isLocked: false,
-    lastLoginAt: new Date().toISOString(),
-    avatarFileId: undefined,
-    avatarUrl: undefined,
-    timezone: 'UTC',
-    language: 'en',
-    emailVerifiedAt: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    role: UserRole.Admin,
-    roleName: 'Admin',
-    preferences: {},
-    addresses: [],
-    contactDetails: [],
-  },
-];
+// Removed mockUsers array as per the request
 
 export const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState<User[]>(mockUsers);
-  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<UserListDto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserModal, setShowUserModal] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingUser, setEditingUser] = useState<UserListDto | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [userToDelete, setUserToDelete] = useState<UserListDto | null>(null);
 
   const [userForm, setUserForm] = useState<CreateUserDto>({
     email: '',
@@ -55,7 +39,28 @@ export const UserManagement: React.FC = () => {
     preferences: {},
     addresses: [],
     contactDetails: [],
+    avatar: null,
+    avatarFileId: null,
+    timezone: null,
+    language: null,
   });
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await apiService.get<PagedResult<UserListDto>>('/user');
+      setUsers(response.items);
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredUsers = users.filter(
     (user) =>
@@ -78,11 +83,15 @@ export const UserManagement: React.FC = () => {
       preferences: {},
       addresses: [],
       contactDetails: [],
+      avatar: null,
+      avatarFileId: 0,
+      timezone: '',
+      language: '',
     });
     setShowUserModal(true);
   };
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: UserListDto) => {
     setEditingUser(user);
     setUserForm({
       email: user.email,
@@ -92,9 +101,13 @@ export const UserManagement: React.FC = () => {
       lastName: user.lastName,
       isActive: user.isActive,
       role: user.role,
-      preferences: user.preferences,
+      preferences: {},
       addresses: [],
       contactDetails: [],
+      avatar: null,
+      avatarFileId: null,
+      timezone: user.timezone || '',
+      language: user.language || '',
     });
     setShowUserModal(true);
   };
@@ -102,35 +115,29 @@ export const UserManagement: React.FC = () => {
   const handleSaveUser = async () => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       if (editingUser) {
-        // Update existing user
-        setUsers((prev) =>
-          prev.map((u) =>
-            u.id === editingUser.id
-              ? { ...u, ...userForm, updatedAt: new Date().toISOString() }
-              : u
-          )
-        );
-      } else {
-        // Create new user
-        const newUser: User = {
-          ...userForm,
-          id: Math.max(...users.map((u) => u.id)) + 1,
-          roleName: UserRole[userForm.role],
-          isLocked: false,
-          emailVerifiedAt: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+        const updateUserDto = {
+          email: userForm.email,
+          username: userForm.username,
+          firstName: userForm.firstName,
+          lastName: userForm.lastName,
+          isActive: userForm.isActive,
+          role: userForm.role,
+          preferences: userForm.preferences,
+          addresses: userForm.addresses,
+          contactDetails: userForm.contactDetails,
+          language: userForm.language,
+          timezone: userForm.timezone,
         };
-        setUsers((prev) => [...prev, newUser]);
+        await apiService.put<User>(`/user/${editingUser.id}`, updateUserDto);
+      } else {
+        await apiService.post<User>('/user', userForm);
       }
-
       setShowUserModal(false);
+      fetchUsers();
     } catch (error) {
       console.error('Failed to save user:', error);
+      alert('Failed to save user. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -141,38 +148,30 @@ export const UserManagement: React.FC = () => {
 
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
+      await apiService.delete(`/user/${userToDelete.id}`);
       setShowDeleteDialog(false);
       setUserToDelete(null);
+      fetchUsers();
     } catch (error) {
       console.error('Failed to delete user:', error);
+      alert('Failed to delete user. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleToggleUserStatus = async (user: User) => {
+  const handleToggleUserStatus = async (user: UserListDto) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === user.id
-            ? {
-                ...u,
-                isActive: !u.isActive,
-                updatedAt: new Date().toISOString(),
-              }
-            : u
-        )
-      );
+      if (user.isActive) {
+        await apiService.post(`/user/${user.id}/deactivate`);
+      } else {
+        await apiService.post(`/user/${user.id}/activate`);
+      }
+      fetchUsers();
     } catch (error) {
       console.error('Failed to toggle user status:', error);
+      alert('Failed to toggle user status. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -211,7 +210,9 @@ export const UserManagement: React.FC = () => {
 
         {/* Users Table */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
-          {filteredUsers.length === 0 ? (
+          {loading ? (
+            <div className="p-6 text-center">Loading users...</div>
+          ) : filteredUsers.length === 0 ? (
             <EmptyState
               icon="users"
               title="No users found"
@@ -418,6 +419,25 @@ export const UserManagement: React.FC = () => {
                 }
               />
             </div>
+          </div>
+          {/* Add Timezone and Language Inputs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Timezone"
+              value={userForm.timezone || ''}
+              onChange={(e) =>
+                setUserForm({ ...userForm, timezone: e.target.value })
+              }
+              placeholder="Enter user's timezone"
+            />
+            <Input
+              label="Language"
+              value={userForm.language || ''}
+              onChange={(e) =>
+                setUserForm({ ...userForm, language: e.target.value })
+              }
+              placeholder="Enter user's preferred language"
+            />
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

@@ -28,18 +28,14 @@ export interface User extends BaseEntity {
   lockoutEnd: string | null;
   twoFactorEnabled: boolean;
   twoFactorSecret: string | null;
-  recoveryCodes: string[]; // List<string> in C#
+  recoveryCodes: string[];
   avatarFileId: number | null;
-  // Assuming FileEntity would also have a TS interface, but here we just reference the ID
-  // avatarFile: FileEntity | null; // This would be a nested object if FileEntity was fully exposed
-  timezone: string | null;
-  language: string | null;
   emailVerifiedAt: string | null;
   emailVerificationToken: string | null;
   passwordChangedAt: string | null;
-  dateOfBirth: string | null; // DateTime in C#
+  dateOfBirth: string | null;
   gender: string | null;
-  preferences: { [key: string]: any };
+  preferences: { [key: string]: unknown };
   sessions: UserSession[];
   passwordResetTokens: PasswordResetToken[];
   addresses: Address[];
@@ -74,7 +70,7 @@ export interface UserDto {
   updatedAt: string;
   role: UserRole;
   roleName: string;
-  preferences: { [key: string]: any };
+  preferences: { [key: string]: unknown };
   addresses: AddressDto[];
   contactDetails: ContactDetailsDto[];
 }
@@ -90,7 +86,7 @@ export interface CreateUserDto {
   timezone: string | null;
   language: string | null;
   role: UserRole;
-  preferences: { [key: string]: any };
+  preferences: { [key: string]: unknown };
   addresses: CreateAddressDto[];
   contactDetails: CreateContactDetailsDto[];
   avatar: File | null;
@@ -106,7 +102,7 @@ export interface UpdateUserDto {
   timezone: string | null;
   language: string | null;
   role: UserRole;
-  preferences: { [key: string]: any };
+  preferences: { [key: string]: unknown };
   addresses: UpdateAddressDto[];
   contactDetails: UpdateContactDetailsDto[];
 }
@@ -136,6 +132,8 @@ export interface UserListDto {
   roleName: string;
   addresses: AddressDto[];
   contactDetails: ContactDetailsDto[];
+  language: string | null;
+  timezone: string | null;
 }
 export interface UserExternalLogin extends BaseEntity {
   userId: number;
@@ -144,7 +142,7 @@ export interface UserExternalLogin extends BaseEntity {
   externalUserId: string;
   email: string | null;
   name: string | null;
-  claims: { [key: string]: any };
+  claims: { [key: string]: unknown };
   accessToken: string | null;
   refreshToken: string | null;
   tokenExpiry: string | null;

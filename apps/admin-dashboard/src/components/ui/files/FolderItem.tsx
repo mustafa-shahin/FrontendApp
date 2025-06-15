@@ -31,7 +31,7 @@ export const FolderItem: React.FC<FolderItemProps> = ({
   if (viewMode === 'grid') {
     return (
       <div
-        className={`p-3 rounded-lg border-2 transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
+        className={`p-3 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
           isSelected
             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
             : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900'
@@ -42,13 +42,13 @@ export const FolderItem: React.FC<FolderItemProps> = ({
       >
         <div className="flex flex-col items-center space-y-2">
           {/* Folder icon */}
-          <div className="w-16 h-16 flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center">
             <i className="fas fa-folder text-4xl text-blue-500 dark:text-blue-400" />
           </div>
 
           {/* Folder name */}
           <div className="text-center">
-            <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-full">
+            <p className="text-sm font-medium text-gray-900 dark:text-white  max-w-full">
               {folder.name}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">

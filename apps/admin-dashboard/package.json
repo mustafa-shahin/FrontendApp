@@ -1,0 +1,8 @@
+{
+  "name": "@frontend-app/admin-dashboard",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "admin-dashboard"
+  }
+}

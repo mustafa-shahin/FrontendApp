@@ -1,10 +1,10 @@
 {
-  "name": "@frontend-app/FrontendApp-e2e",
+  "name": "user-app-e2e",
   "version": "0.0.1",
   "private": true,
   "nx": {
     "implicitDependencies": [
-      "@frontend-app/FrontendApp"
+      "user-app"
     ]
   }
 }

@@ -1,0 +1,171 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "add": "Add",
+    "remove": "Remove",
+    "upload": "Upload",
+    "browse": "Browse",
+    "loading": "Loading...",
+    "search": "Search",
+    "actions": "Actions",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "yes": "Yes",
+    "no": "No",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "user": {
+    "title": "User Management",
+    "subtitle": "Manage system users and their permissions",
+    "addUser": "Add User",
+    "editUser": "Edit User",
+    "createUser": "Create User",
+    "deleteUser": "Delete User",
+    "userDetails": "User Details",
+    "personalInformation": "Personal Information",
+    "contactInformation": "Contact Information",
+    "addressInformation": "Address Information",
+    "securitySettings": "Security Settings",
+    "preferences": "Preferences",
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "username": "Username",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "role": "Role",
+      "isActive": "Active User",
+      "isLocked": "Account Locked",
+      "timezone": "Timezone",
+      "language": "Language",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "avatar": "Profile Picture",
+      "lastLogin": "Last Login",
+      "emailVerified": "Email Verified",
+      "twoFactorEnabled": "Two-Factor Authentication"
+    },
+    "roles": {
+      "Admin": "Administrator",
+      "Customer": "Customer",
+      "Dev": "Developer"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "preferNotToSay": "Prefer not to say"
+    },
+    "placeholders": {
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "email": "Enter email address",
+      "username": "Enter username",
+      "password": "Enter password",
+      "timezone": "Select timezone",
+      "language": "Select language"
+    },
+    "messages": {
+      "userCreated": "User created successfully",
+      "userUpdated": "User updated successfully",
+      "userDeleted": "User deleted successfully",
+      "deleteConfirm": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "noUsersFound": "No users found",
+      "searchUsers": "Search users..."
+    }
+  },
+  "address": {
+    "title": "Addresses",
+    "addAddress": "Add Address",
+    "editAddress": "Edit Address",
+    "removeAddress": "Remove Address",
+    "fields": {
+      "type": "Address Type",
+      "street": "Street Address",
+      "city": "City",
+      "state": "State/Province",
+      "postalCode": "Postal Code",
+      "country": "Country",
+      "isPrimary": "Primary Address"
+    },
+    "types": {
+      "home": "Home",
+      "work": "Work",
+      "billing": "Billing",
+      "shipping": "Shipping",
+      "other": "Other"
+    },
+    "placeholders": {
+      "street": "Enter street address",
+      "city": "Enter city",
+      "state": "Enter state or province",
+      "postalCode": "Enter postal code",
+      "country": "Select country"
+    }
+  },
+  "contact": {
+    "title": "Contact Details",
+    "addContact": "Add Contact",
+    "editContact": "Edit Contact",
+    "removeContact": "Remove Contact",
+    "fields": {
+      "type": "Contact Type",
+      "value": "Contact Value",
+      "isPrimary": "Primary Contact"
+    },
+    "types": {
+      "phone": "Phone",
+      "mobile": "Mobile",
+      "email": "Email",
+      "fax": "Fax",
+      "website": "Website",
+      "other": "Other"
+    },
+    "placeholders": {
+      "phone": "Enter phone number",
+      "mobile": "Enter mobile number",
+      "email": "Enter email address",
+      "website": "Enter website URL",
+      "value": "Enter contact value"
+    }
+  },
+  "file": {
+    "upload": "Upload File",
+    "change": "Change File",
+    "remove": "Remove File",
+    "select": "Select File",
+    "dragDrop": "Drag and drop files here or click to browse",
+    "supportedFormats": "Supported formats: {{formats}}",
+    "maxSize": "Maximum size: {{size}}",
+    "uploading": "Uploading...",
+    "uploadSuccess": "Upload successful",
+    "uploadError": "Upload failed",
+    "invalidFormat": "Invalid file format",
+    "fileTooLarge": "File is too large"
+  },
+  "form": {
+    "validation": {
+      "required": "This field is required",
+      "email": "Please enter a valid email address",
+      "minLength": "Must be at least {{min}} characters",
+      "maxLength": "Must be no more than {{max}} characters",
+      "passwordMatch": "Passwords do not match",
+      "invalidFormat": "Invalid format"
+    },
+    "sections": {
+      "general": "General Information",
+      "contact": "Contact Information",
+      "address": "Address Information",
+      "security": "Security Settings",
+      "preferences": "Preferences",
+      "files": "Files & Media"
+    }
+  }
+}

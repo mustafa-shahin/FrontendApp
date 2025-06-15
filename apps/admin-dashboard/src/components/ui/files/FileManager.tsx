@@ -1,0 +1,460 @@
+import React, { useState, useEffect } from 'react';
+import { Layout } from '../layout/Layout';
+import { PageHeader } from '../layout/PageHeader';
+import { Breadcrumbs } from '../layout/Breadcrumbs';
+import { EmptyState } from '../layout/EmptyState';
+import { Button } from '../Button';
+import { Input } from '../Input';
+import { LoadingSpinner } from '../LoadingSpinner';
+import { FileGrid } from '../files/FileGrid';
+import { FileList } from '../files/FileList';
+import { FileUploadZone } from '../files/FileUploadZone';
+import { FileEditDialog } from '../files/FileEditDialog';
+import { FolderEditDialog } from '../files/FolderEditDialog';
+import { Dialog } from '../Dialog';
+import { Modal } from '../Modal';
+import {
+  FileEntity,
+  Folder,
+  BreadcrumbItem,
+  ContextMenuItem,
+} from '../../../types';
+import { fileService } from '../../../services/file.service';
+import { folderService } from '../../../services/folder.service';
+import { useFileManager } from '../../../contexts/FileManagerContext';
+
+export const FileManager: React.FC = () => {
+  const {
+    viewMode,
+    setViewMode,
+    selectedItems,
+    setSelectedItems,
+    currentFolder,
+    setCurrentFolder,
+    searchTerm,
+    setSearchTerm,
+    isLoading,
+    setIsLoading,
+  } = useFileManager();
+
+  const [files, setFiles] = useState<FileEntity[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
+  const [editingFile, setEditingFile] = useState<FileEntity | null>(null);
+  const [editingFolder, setEditingFolder] = useState<Folder | undefined>(
+    undefined
+  );
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showFolderDialog, setShowFolderDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    items: ContextMenuItem[];
+  } | null>(null);
+
+  useEffect(() => {
+    loadData();
+  }, [currentFolder, searchTerm]);
+
+  useEffect(() => {
+    loadBreadcrumbs();
+  }, [currentFolder]);
+
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      // Load folders
+      const folderData = await folderService.getFolders(currentFolder?.id);
+      setFolders(folderData.items);
+
+      // Load files
+      const fileData = await fileService.getFiles({
+        folderId: currentFolder?.id,
+        searchTerm,
+        page: 1,
+        pageSize: 100,
+      });
+      setFiles(fileData.items);
+    } catch (error) {
+      console.error('Failed to load data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadBreadcrumbs = async () => {
+    if (!currentFolder) {
+      setBreadcrumbs([{ name: 'Root', href: '/' }]);
+      return;
+    }
+
+    try {
+      const folderBreadcrumbs = await folderService.getFolderBreadcrumbs(
+        currentFolder.id
+      );
+      const breadcrumbItems: BreadcrumbItem[] = [
+        { name: 'Root', href: '/' },
+        ...folderBreadcrumbs.map((folder) => ({
+          id: folder.id,
+          name: folder.name,
+          href: `/folder/${folder.id}`,
+        })),
+      ];
+      setBreadcrumbs(breadcrumbItems);
+    } catch (error) {
+      console.error('Failed to load breadcrumbs:', error);
+    }
+  };
+
+  const handleItemSelect = (item: FileEntity | Folder) => {
+    setSelectedItems((prev) => {
+      const isSelected = prev.some((selected) => selected.id === item.id);
+      if (isSelected) {
+        return prev.filter((selected) => selected.id !== item.id);
+      } else {
+        return [...prev, item];
+      }
+    });
+  };
+
+  const handleItemDoubleClick = (item: FileEntity | Folder) => {
+    if ('subFolders' in item) {
+      // It's a folder
+      setCurrentFolder(item);
+      setSelectedItems([]);
+    } else {
+      // It's a file - open edit dialog
+      setEditingFile(item);
+    }
+  };
+
+  const handleItemContextMenu = (
+    item: FileEntity | Folder,
+    event: React.MouseEvent
+  ) => {
+    event.preventDefault();
+
+    const contextMenuItems: ContextMenuItem[] = [
+      {
+        id: 'edit',
+        label: 'Edit',
+        icon: 'edit',
+        action: () => {
+          if ('subFolders' in item) {
+            setEditingFolder(item);
+          } else {
+            setEditingFile(item);
+          }
+          setContextMenu(null);
+        },
+      },
+      {
+        id: 'download',
+        label: 'Download',
+        icon: 'download',
+        action: () => {
+          if ('fileSize' in item) {
+            window.open(fileService.getDownloadUrl(item.id), '_blank');
+          }
+          setContextMenu(null);
+        },
+        disabled: 'subFolders' in item,
+      },
+      {
+        id: 'separator1',
+        label: '',
+        icon: '',
+        action: () => {},
+        separator: true,
+      },
+      {
+        id: 'delete',
+        label: 'Delete',
+        icon: 'trash',
+        action: () => {
+          setSelectedItems([item]);
+          setShowDeleteDialog(true);
+          setContextMenu(null);
+        },
+      },
+    ];
+
+    setContextMenu({
+      x: event.clientX,
+      y: event.clientY,
+      items: contextMenuItems,
+    });
+  };
+
+  const handleFilesUpload = async (uploadFiles: File[]) => {
+    setIsLoading(true);
+    try {
+      if (uploadFiles.length === 1) {
+        await fileService.uploadFile({
+          file: uploadFiles[0],
+          folderId: currentFolder?.id,
+          isPublic: false,
+          generateThumbnail: true,
+          tags: {},
+        });
+      } else {
+        await fileService.uploadMultipleFiles(
+          uploadFiles,
+          currentFolder?.id,
+          false
+        );
+      }
+
+      await loadData();
+      setShowUploadModal(false);
+    } catch (error) {
+      console.error('Failed to upload files:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedItems.length === 0) return;
+
+    setIsLoading(true);
+    try {
+      for (const item of selectedItems) {
+        if ('fileSize' in item) {
+          await fileService.deleteFile(item.id);
+        } else {
+          await folderService.deleteFolder(item.id, false);
+        }
+      }
+
+      setSelectedItems([]);
+      await loadData();
+      setShowDeleteDialog(false);
+    } catch (error) {
+      console.error('Failed to delete items:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBreadcrumbClick = (breadcrumb: BreadcrumbItem) => {
+    if (breadcrumb.id) {
+      const folder = folders.find((f) => f.id === breadcrumb.id);
+      setCurrentFolder(folder || null);
+    } else {
+      setCurrentFolder(null);
+    }
+    setSelectedItems([]);
+  };
+
+  // Close context menu when clicking elsewhere
+  useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
+  return (
+    <Layout>
+      <div className="space-y-6">
+        {/* Breadcrumbs */}
+        <Breadcrumbs items={breadcrumbs} />
+
+        {/* Page Header */}
+        <PageHeader
+          title="File Manager"
+          subtitle={
+            currentFolder
+              ? `Folder: ${currentFolder.name}`
+              : 'All files and folders'
+          }
+        >
+          <div className="flex items-center space-x-3">
+            {/* Search */}
+            <Input
+              icon="search"
+              placeholder="Search files and folders..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-64"
+            />
+
+            {/* View mode toggle */}
+            <div className="flex border border-gray-300 dark:border-gray-600 rounded-md">
+              <Button
+                variant={viewMode === 'grid' ? 'primary' : 'ghost'}
+                size="sm"
+                icon="th"
+                onClick={() => setViewMode('grid')}
+                className="rounded-r-none"
+              />
+              <Button
+                variant={viewMode === 'list' ? 'primary' : 'ghost'}
+                size="sm"
+                icon="list"
+                onClick={() => setViewMode('list')}
+                className="rounded-l-none"
+              />
+            </div>
+
+            {/* Actions */}
+            <Button icon="plus" onClick={() => setShowFolderDialog(true)}>
+              New Folder
+            </Button>
+
+            <Button
+              variant="primary"
+              icon="upload"
+              onClick={() => setShowUploadModal(true)}
+            >
+              Upload Files
+            </Button>
+          </div>
+        </PageHeader>
+
+        {/* Toolbar */}
+        {selectedItems.length > 0 && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-blue-700 dark:text-blue-300">
+                {selectedItems.length} item(s) selected
+              </span>
+              <div className="flex space-x-2">
+                <Button
+                  variant="danger"
+                  size="sm"
+                  icon="trash"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  Delete
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedItems([])}
+                >
+                  Clear Selection
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : files.length === 0 && folders.length === 0 ? (
+            <EmptyState
+              icon="folder-open"
+              title="No files or folders"
+              description="Start by creating a folder or uploading some files."
+              action={{
+                label: 'Upload Files',
+                onClick: () => setShowUploadModal(true),
+              }}
+            />
+          ) : viewMode === 'grid' ? (
+            <div className="p-6">
+              <FileGrid
+                files={files}
+                folders={folders}
+                selectedItems={selectedItems}
+                onItemSelect={handleItemSelect}
+                onItemDoubleClick={handleItemDoubleClick}
+                onItemContextMenu={handleItemContextMenu}
+              />
+            </div>
+          ) : (
+            <FileList
+              files={files}
+              folders={folders}
+              selectedItems={selectedItems}
+              onItemSelect={handleItemSelect}
+              onItemDoubleClick={handleItemDoubleClick}
+              onItemContextMenu={handleItemContextMenu}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <div
+          className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg py-1 min-w-48"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+        >
+          {contextMenu.items.map((item) =>
+            item.separator ? (
+              <hr
+                key={item.id}
+                className="my-1 border-gray-200 dark:border-gray-700"
+              />
+            ) : (
+              <button
+                key={item.id}
+                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                onClick={item.action}
+                disabled={item.disabled}
+              >
+                <i className={`fas fa-${item.icon} w-4 h-4 mr-3`} />
+                {item.label}
+              </button>
+            )
+          )}
+        </div>
+      )}
+
+      {/* Dialogs */}
+      <FileEditDialog
+        file={editingFile}
+        isOpen={!!editingFile}
+        onClose={() => setEditingFile(null)}
+        onSave={(updatedFile) => {
+          setFiles((prev) =>
+            prev.map((f) => (f.id === updatedFile.id ? updatedFile : f))
+          );
+          setEditingFile(null);
+        }}
+      />
+
+      <FolderEditDialog
+        folder={editingFolder}
+        parentFolderId={currentFolder?.id}
+        isOpen={showFolderDialog || !!editingFolder}
+        onClose={() => {
+          setShowFolderDialog(false);
+          setEditingFolder(undefined);
+        }}
+        onSave={(folder) => {
+          loadData();
+          setShowFolderDialog(false);
+          setEditingFolder(undefined);
+        }}
+      />
+
+      <Modal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        title="Upload Files"
+        size="lg"
+      >
+        <FileUploadZone onFilesSelected={handleFilesUpload} multiple={true} />
+      </Modal>
+
+      <Dialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleDeleteSelected}
+        title="Delete Items"
+        message={`Are you sure you want to delete ${selectedItems.length} item(s)? This action cannot be undone.`}
+        confirmText="Delete"
+        variant="danger"
+        loading={isLoading}
+      />
+    </Layout>
+  );
+};

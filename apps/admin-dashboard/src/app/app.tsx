@@ -1,50 +1,103 @@
-// Uncomment this line to use CSS modules
-// import styles from './app.module.scss';
-import NxWelcome from './nx-welcome';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { FileManagerProvider } from '../contexts/FileManagerContext';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
+import { LoginPage } from '../pages/LoginPage';
+import { Dashboard } from '../pages/Dashboard';
+import { FileManager } from '../pages/FileManager';
+import { UserManagement } from '../pages/UserManagement';
+import { NotFound } from '../pages/NotFound';
 
-import { Route, Routes, Link } from 'react-router-dom';
+// Protected Route Component
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 export function App() {
-  return (
-    <div>
-      <NxWelcome title="admin-dashboard" />
+  const { isAuthenticated, isLoading } = useAuth();
 
-      {/* START: routes */}
-      {/* These routes and navigation have been generated for you */}
-      {/* Feel free to move and update them to fit your needs */}
-      <br />
-      <hr />
-      <br />
-      <div role="navigation">
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/page-2">Page 2</Link>
-          </li>
-        </ul>
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <div className="text-center">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Routes>
+        {/* Public Routes */}
+        <Route
+          path="/login"
+          element={
+            isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />
+          }
+        />
+
+        {/* Protected Routes */}
         <Route
           path="/"
           element={
-            <div>
-              This is the generated root route.{' '}
-              <Link to="/page-2">Click here for page 2.</Link>
-            </div>
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
           }
         />
+
         <Route
-          path="/page-2"
+          path="/files/*"
           element={
-            <div>
-              <Link to="/">Click here to go back to root page.</Link>
-            </div>
+            <ProtectedRoute>
+              <FileManagerProvider>
+                <Routes>
+                  <Route index element={<FileManager />} />
+                  <Route path="folders" element={<FileManager />} />
+                  <Route path="images" element={<FileManager />} />
+                  <Route path="documents" element={<FileManager />} />
+                  <Route path="videos" element={<FileManager />} />
+                  <Route path="audio" element={<FileManager />} />
+                  <Route path="folder/:folderId" element={<FileManager />} />
+                </Routes>
+              </FileManagerProvider>
+            </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch all route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
-      {/* END: routes */}
     </div>
   );
 }

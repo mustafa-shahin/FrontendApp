@@ -1,7 +1,7 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-
+import path from 'path';
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/admin-dashboard',
@@ -12,6 +12,12 @@ export default defineConfig(() => ({
   preview: {
     port: 4300,
     host: 'localhost',
+  },
+   resolve: {
+    alias: {
+      '@frontend-app/types': path.resolve(__dirname, '../../libs/types/src/index.ts'),
+      '@': path.resolve(__dirname, './src'),
+    },
   },
   plugins: [react()],
   // Uncomment this if you are using workers.

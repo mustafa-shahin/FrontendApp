@@ -2,8 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@frontend-app/types": ["libs/types/src/index.ts"],
-      "@frontend-app/services": ["libs/services/src/index.ts"]
+      "@frontend-app/types": ["libs/types/src/index.ts"]
     },
     "composite": true,
     "declarationMap": true,

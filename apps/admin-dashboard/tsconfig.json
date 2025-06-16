@@ -1,6 +1,6 @@
 {
   "files": [],
-  "include": [],
+  "include": ["src", "../../libs/types/src"],
   "references": [
     {
       "path": "../../libs/types"

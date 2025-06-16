@@ -1,9 +1,8 @@
-import { BaseEntity } from './baseEntity';
-import { User } from './user';
+import { UserDto } from './index';
 
-export interface UserSession extends BaseEntity {
+export interface UserSession {
   userId: number;
-  user: User;
+  user: UserDto;
   refreshToken: string;
   ipAddress: string;
   userAgent: string;

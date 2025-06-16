@@ -1,5 +1,3 @@
-export type ViewMode = 'grid' | 'list';
-
 export type Theme = 'light' | 'dark';
 
 export interface BreadcrumbItem {

@@ -12,6 +12,7 @@ export const Button: React.FC<ButtonProps> = ({
   icon,
   iconPosition = 'left',
   className = '',
+  title = '',
 }) => {
   const baseClasses =
     'inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
@@ -46,6 +47,7 @@ export const Button: React.FC<ButtonProps> = ({
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       disabled={disabled || loading}
       onClick={onClick}
+      title={title}
     >
       {loading ? (
         <i

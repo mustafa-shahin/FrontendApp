@@ -63,6 +63,7 @@ export interface UpdateUserDto {
   preferences: { [key: string]: unknown };
   addresses: UpdateAddressDto[];
   contactDetails: UpdateContactDetailsDto[];
+  avatar: File | null;
 }
 
 export interface ChangePasswordDto {

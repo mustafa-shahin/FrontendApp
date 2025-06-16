@@ -39,4 +39,5 @@ export interface ButtonProps extends BaseComponentProps {
   type?: 'button' | 'submit' | 'reset';
   icon?: string;
   iconPosition?: 'left' | 'right';
+  title?: string;
 }

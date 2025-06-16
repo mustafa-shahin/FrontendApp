@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@frontend-app/types": ["libs/types/src/index.ts"]
+    },
     "composite": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,

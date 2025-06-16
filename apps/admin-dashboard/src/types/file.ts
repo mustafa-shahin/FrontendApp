@@ -1,4 +1,4 @@
-import { FileType } from './index';
+import { FileType } from '@frontend-app/types';
 export interface FileUploadDto {
   file: File;
   description?: string;
@@ -48,7 +48,7 @@ export interface FileDto {
   lastAccessedAt: string | null;
   width: number | null;
   height: number | null;
-  duration: string | null; // TimeSpan in C# maps to string in TS (e.g., "00:00:00")
+  duration: string | null;
   hash: string | null;
   isProcessed: boolean;
   processingStatus: string | null;

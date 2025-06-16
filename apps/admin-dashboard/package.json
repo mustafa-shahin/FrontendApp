@@ -4,5 +4,8 @@
   "private": true,
   "nx": {
     "name": "admin-dashboard"
+  },
+  "dependencies": {
+    "@frontend-app/types": "workspace:*"
   }
 }

@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, LoginDto } from '../types';
+import { UserDto, LoginDto } from '@frontend-app/types';
 import { authService } from '../services/auth.service';
 
 interface AuthContextType {
-  user: User | null;
+  user: UserDto | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginDto) => Promise<void>;
@@ -26,7 +26,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

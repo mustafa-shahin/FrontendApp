@@ -34,5 +34,10 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.json"
+  ],
+  "references": [
+    {
+      "path": "../../libs/types"
+    }
   ]
 }

@@ -6,6 +6,9 @@
     "name": "admin-dashboard"
   },
   "dependencies": {
-    "@frontend-app/types": "workspace:*"
+    "@frontend-app/types": "workspace:*",
+    "@hookform/resolvers": "^5.1.1",
+    "react-hook-form": "^7.58.0",
+    "zod": "^3.25.65"
   }
 }

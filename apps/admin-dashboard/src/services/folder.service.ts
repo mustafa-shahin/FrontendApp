@@ -4,8 +4,8 @@ import {
   UpdateFolderDto,
   MoveFolderDto,
   CopyFolderDto,
-  PagedResult,
 } from '../types';
+import { PagedResult } from '@frontend-app/types';
 import { apiService } from './api.service';
 
 class FolderService {

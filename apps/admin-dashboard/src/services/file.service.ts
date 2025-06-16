@@ -3,12 +3,11 @@ import {
   FileUploadDto,
   UpdateFileDto,
   FileSearchDto,
-  PagedResult,
   MoveFileDto,
   CopyFileDto,
 } from '../types';
+import { PagedResult } from '@frontend-app/types';
 import { apiService } from './api.service';
-import { environment } from '../config/environment';
 class FileService {
   async getFiles(
     searchParams?: Partial<FileSearchDto>

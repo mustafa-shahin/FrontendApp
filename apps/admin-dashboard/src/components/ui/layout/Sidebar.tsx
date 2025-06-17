@@ -31,19 +31,19 @@ const sidebarItems: SidebarItem[] = [
         id: 'folders',
         label: 'Folders',
         icon: 'folder-open',
-        path: '/files/folders',
+        path: '/folders',
       },
       {
         id: 'images',
         label: 'Images',
         icon: 'image',
-        path: '/files/images',
+        path: '/files',
       },
       {
         id: 'documents',
         label: 'Documents',
         icon: 'file-alt',
-        path: '/files/documents',
+        path: '/documents',
       },
       {
         id: 'videos',

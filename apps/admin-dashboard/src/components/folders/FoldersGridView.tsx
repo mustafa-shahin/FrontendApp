@@ -128,7 +128,7 @@ const FolderGridItem: React.FC<FolderGridItemProps> = ({
             size="sm"
             icon="folder-open"
             onClick={(e) => {
-              e.stopPropagation();
+              e?.stopPropagation();
               onOpen();
             }}
           />
@@ -137,7 +137,7 @@ const FolderGridItem: React.FC<FolderGridItemProps> = ({
             size="sm"
             icon="edit"
             onClick={(e) => {
-              e.stopPropagation();
+              e?.stopPropagation();
               onEdit();
             }}
           />
@@ -146,7 +146,7 @@ const FolderGridItem: React.FC<FolderGridItemProps> = ({
             size="sm"
             icon="trash"
             onClick={(e) => {
-              e.stopPropagation();
+              e?.stopPropagation();
               onDelete();
             }}
           />

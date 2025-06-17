@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  keepPreviousData,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { folderService } from '../services/folder.service';
 import {
   CreateFolderDto,
@@ -34,7 +29,7 @@ export const useFolders = (
   return useQuery({
     queryKey: folderKeys.list(parentFolderId, page, pageSize),
     queryFn: () => folderService.getFolders(parentFolderId, page, pageSize),
-    placeholderData: keepPreviousData,
+    placeholderData: (previousData) => previousData,
   });
 };
 

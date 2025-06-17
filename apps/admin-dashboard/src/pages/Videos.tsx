@@ -19,14 +19,11 @@ import { fileService } from '../services/file.service';
 
 type ViewMode = 'list' | 'grid';
 
-export const Files: React.FC = () => {
+export const Videos: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFileType, setSelectedFileType] = useState<
-    FileType | undefined
-  >();
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [selectedFiles, setSelectedFiles] = useState<FileDto[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editingFile, setEditingFile] = useState<FileDto | null>(null);
@@ -36,13 +33,13 @@ export const Files: React.FC = () => {
     multiple: boolean;
   }>({ isOpen: false, file: null, multiple: false });
 
-  // Data fetching
+  // Data fetching - Filter for video files only
   const { data, isLoading, error, refetch } = useFiles(
     currentPage,
     pageSize,
     undefined,
     searchTerm,
-    selectedFileType
+    FileType.Video
   ) as {
     data?: { items: FileDto[]; totalCount: number };
     isLoading: boolean;
@@ -70,11 +67,6 @@ export const Files: React.FC = () => {
   // Handlers
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
-
-  const handleFileTypeFilter = (fileType: FileType | undefined) => {
-    setSelectedFileType(fileType);
     setCurrentPage(1);
   };
 
@@ -140,27 +132,20 @@ export const Files: React.FC = () => {
     setEditingFile(null);
   };
 
-  const fileTypeOptions = [
-    { value: undefined, label: 'All Types' },
-    { value: FileType.Image, label: 'Images' },
-    { value: FileType.Document, label: 'Documents' },
-    { value: FileType.Video, label: 'Videos' },
-    { value: FileType.Audio, label: 'Audio' },
-    { value: FileType.Archive, label: 'Archives' },
-    { value: FileType.Other, label: 'Other' },
-  ];
-
   return (
     <Layout>
       <div className="space-y-6">
-        <PageHeader title="Files" subtitle="Manage your files and documents">
+        <PageHeader
+          title="Videos"
+          subtitle="Manage your video files (MP4, AVI, MOV, etc.)"
+        >
           <div className="flex items-center space-x-3">
             <Button
               variant="secondary"
               icon="upload"
               onClick={() => setShowUploadModal(true)}
             >
-              Upload Files
+              Upload Videos
             </Button>
 
             {selectedFiles.length > 0 && (
@@ -178,36 +163,14 @@ export const Files: React.FC = () => {
         {/* Filters and View Toggle */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <div className="w-full sm:w-64">
-                <Input
-                  type="text"
-                  placeholder="Search files..."
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  icon="search"
-                />
-              </div>
-
-              <div className="w-full sm:w-48">
-                <select
-                  value={selectedFileType ?? ''}
-                  onChange={(e) =>
-                    handleFileTypeFilter(
-                      e.target.value
-                        ? (parseInt(e.target.value) as FileType)
-                        : undefined
-                    )
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                >
-                  {fileTypeOptions.map((option) => (
-                    <option key={option.label} value={option.value ?? ''}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="w-full sm:w-64">
+              <Input
+                type="text"
+                placeholder="Search videos..."
+                value={searchTerm}
+                onChange={handleSearch}
+                icon="search"
+              />
             </div>
 
             <div className="flex items-center space-x-2">
@@ -297,10 +260,10 @@ export const Files: React.FC = () => {
             })
           }
           onConfirm={handleDeleteConfirm}
-          title={deleteConfirmation.multiple ? 'Delete Files' : 'Delete File'}
+          title={deleteConfirmation.multiple ? 'Delete Videos' : 'Delete Video'}
           message={
             deleteConfirmation.multiple
-              ? `Are you sure you want to delete ${selectedFiles.length} selected files? This action cannot be undone.`
+              ? `Are you sure you want to delete ${selectedFiles.length} selected videos? This action cannot be undone.`
               : `Are you sure you want to delete "${deleteConfirmation.file?.originalFileName}"? This action cannot be undone.`
           }
           confirmText="Delete"

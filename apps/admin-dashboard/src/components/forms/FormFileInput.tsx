@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useId } from 'react';
 import { FormField } from './FormField';
 import { Button } from '../ui/Button';
 import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';
@@ -32,6 +32,7 @@ export const FormFileInput = forwardRef<HTMLInputElement, FormFileInputProps>(
   ) => {
     const [preview, setPreview] = useState<string | null>(previewUrl || null);
     const [fileName, setFileName] = useState<string>('');
+    const fileInputId = useId(); // Generate a stable unique ID
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
@@ -58,6 +59,11 @@ export const FormFileInput = forwardRef<HTMLInputElement, FormFileInputProps>(
       }
     };
 
+    const triggerFileSelect = () => {
+      const input = document.getElementById(fileInputId) as HTMLInputElement;
+      input?.click();
+    };
+
     return (
       <FormField
         label={label}
@@ -75,19 +81,14 @@ export const FormFileInput = forwardRef<HTMLInputElement, FormFileInputProps>(
               multiple={multiple}
               onChange={handleFileChange}
               className="hidden"
-              id={`file-${Math.random().toString(36).substr(2, 9)}`}
+              id={fileInputId}
               {...props}
             />
             <Button
               type="button"
               variant="secondary"
               icon="upload"
-              onClick={() => {
-                const input = document.getElementById(
-                  `file-${Math.random().toString(36).substr(2, 9)}`
-                ) as HTMLInputElement;
-                input?.click();
-              }}
+              onClick={triggerFileSelect}
             >
               Choose File
             </Button>

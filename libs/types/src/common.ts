@@ -33,7 +33,7 @@ export interface ButtonProps extends BaseComponentProps {
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   loading?: boolean;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'reset';
   icon?: string;
   iconPosition?: 'left' | 'right';

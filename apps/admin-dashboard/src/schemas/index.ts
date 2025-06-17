@@ -1,6 +1,15 @@
 import { z } from 'zod';
 import { UserRole, FileType, FolderType } from '@frontend-app/types';
 
+// Helper function to handle empty string to null conversion for optional numbers
+const optionalNumber = z
+  .union([
+    z.string().transform((val) => (val === '' ? null : Number(val))),
+    z.number(),
+    z.null(),
+  ])
+  .optional();
+
 // Address Schema
 export const addressSchema = z.object({
   id: z.number().optional(),
@@ -38,7 +47,7 @@ export const contactDetailsSchema = z.object({
   contactType: z.string().nullable().optional(),
 });
 
-// User Schema
+// User Schema - FIXED: Added coerce for role and pictureFileId
 export const userSchema = z.object({
   id: z.number().optional(),
   email: z.string().email('Invalid email address'),
@@ -46,8 +55,8 @@ export const userSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   isActive: z.boolean().default(true),
-  pictureFileId: z.number().nullable().optional(),
-  role: z.nativeEnum(UserRole),
+  pictureFileId: optionalNumber,
+  role: z.coerce.number().pipe(z.nativeEnum(UserRole)),
   addresses: z.array(addressSchema).default([]),
   contactDetails: z.array(contactDetailsSchema).default([]),
   picture: z.instanceof(File).nullable().optional(),
@@ -65,12 +74,12 @@ export const updateUserSchema = userSchema.partial().extend({
   id: z.number(),
 });
 
-// File Schema
+// File Schema - FIXED: Added proper handling for folderId
 export const fileUploadSchema = z.object({
   file: z.instanceof(File, { message: 'File is required' }),
   description: z.string().optional(),
   alt: z.string().optional(),
-  folderId: z.number().nullable().optional(),
+  folderId: optionalNumber,
   isPublic: z.boolean().default(false),
   tags: z.record(z.unknown()).default({}),
   generateThumbnail: z.boolean().default(true),
@@ -82,33 +91,36 @@ export const updateFileSchema = z.object({
   alt: z.string().optional(),
   isPublic: z.boolean(),
   tags: z.record(z.unknown()).default({}),
-  folderId: z.number().nullable().optional(),
+  folderId: optionalNumber,
 });
 
 export const fileSearchSchema = z.object({
   searchTerm: z.string().optional(),
-  fileType: z.nativeEnum(FileType).optional(),
-  folderId: z.number().optional(),
+  fileType: z.coerce.number().pipe(z.nativeEnum(FileType)).optional(),
+  folderId: optionalNumber,
   isPublic: z.boolean().optional(),
   createdFrom: z.string().optional(),
   createdTo: z.string().optional(),
-  minSize: z.number().optional(),
-  maxSize: z.number().optional(),
+  minSize: z.coerce.number().optional(),
+  maxSize: z.coerce.number().optional(),
   tags: z.array(z.string()).default([]),
-  page: z.number().default(1),
-  pageSize: z.number().default(20),
+  page: z.coerce.number().default(1),
+  pageSize: z.coerce.number().default(20),
   sortBy: z.string().default('createdAt'),
   sortDirection: z.string().default('desc'),
 });
 
-// Folder Schema
+// Folder Schema - FIXED: Added coerce for folderType and proper handling for parentFolderId
 export const folderSchema = z.object({
   id: z.number().optional(),
   name: z.string().min(1, 'Folder name is required'),
   description: z.string().optional(),
-  parentFolderId: z.number().nullable().optional(),
+  parentFolderId: optionalNumber,
   isPublic: z.boolean().default(false),
-  folderType: z.nativeEnum(FolderType).default(FolderType.General),
+  folderType: z.coerce
+    .number()
+    .pipe(z.nativeEnum(FolderType))
+    .default(FolderType.General),
   metadata: z.record(z.unknown()).default({}),
 });
 

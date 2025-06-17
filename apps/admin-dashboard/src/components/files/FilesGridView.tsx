@@ -190,7 +190,7 @@ const FileGridItem: React.FC<FileGridItemProps> = ({
             size="sm"
             icon="download"
             onClick={(e) => {
-              e.stopPropagation();
+              e?.stopPropagation();
               onDownload();
             }}
           />
@@ -199,7 +199,7 @@ const FileGridItem: React.FC<FileGridItemProps> = ({
             size="sm"
             icon="edit"
             onClick={(e) => {
-              e.stopPropagation();
+              e?.stopPropagation();
               onEdit();
             }}
           />
@@ -208,7 +208,7 @@ const FileGridItem: React.FC<FileGridItemProps> = ({
             size="sm"
             icon="trash"
             onClick={(e) => {
-              e.stopPropagation();
+              e?.stopPropagation();
               onDelete();
             }}
           />

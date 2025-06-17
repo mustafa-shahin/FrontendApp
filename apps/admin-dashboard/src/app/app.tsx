@@ -1,102 +1,67 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { LoginPage } from '../pages/LoginPage';
 import { Dashboard } from '../pages/Dashboard';
-import { Users } from '../pages/Users';
 import { Files } from '../pages/Files';
+import { Images } from '../pages/Images';
+import { Documents } from '../pages/Documents';
+import { Videos } from '../pages/Videos';
+import { Audio } from '../pages/Audio';
 import { Folders } from '../pages/Folders';
+import { Users } from '../pages/Users';
+import { Settings } from '../pages/Settings';
 import { NotFound } from '../pages/NotFound';
+import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+function App() {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-};
-
-export function App() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="text-center">
-          <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoginPage />;
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <Routes>
-        {/* Public Routes */}
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />
-          }
-        />
+    <Routes>
+      {/* Dashboard */}
+      <Route path="/" element={<Dashboard />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+      {/* File Management */}
+      <Route path="/files" element={<Files />} />
+      <Route path="/files/images" element={<Images />} />
+      <Route path="/files/documents" element={<Documents />} />
+      <Route path="/files/videos" element={<Videos />} />
+      <Route path="/files/audio" element={<Audio />} />
+      <Route path="/files/folders" element={<Folders />} />
 
-        <Route
-          path="/users"
-          element={
-            <ProtectedRoute>
-              <Users />
-            </ProtectedRoute>
-          }
-        />
+      {/* Legacy routes for backwards compatibility */}
+      <Route
+        path="/documents"
+        element={<Navigate to="/files/documents" replace />}
+      />
+      <Route path="/images" element={<Navigate to="/files/images" replace />} />
+      <Route path="/videos" element={<Navigate to="/files/videos" replace />} />
+      <Route path="/audio" element={<Navigate to="/files/audio" replace />} />
 
-        <Route
-          path="/files"
-          element={
-            <ProtectedRoute>
-              <Files />
-            </ProtectedRoute>
-          }
-        />
+      {/* Folder Management */}
+      <Route path="/folders" element={<Folders />} />
 
-        <Route
-          path="/folders"
-          element={
-            <ProtectedRoute>
-              <Folders />
-            </ProtectedRoute>
-          }
-        />
+      {/* User Management */}
+      <Route path="/users" element={<Users />} />
 
-        {/* Catch all route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
+      {/* Settings */}
+      <Route path="/settings" element={<Settings />} />
+
+      {/* 404 Not Found */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 

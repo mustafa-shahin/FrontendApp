@@ -43,7 +43,7 @@ export const useFiles = (
     queryKey: fileKeys.list(page, pageSize, folderId, search, fileType),
     queryFn: () =>
       fileService.getFiles(page, pageSize, folderId, search, fileType),
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
   });
 };
 

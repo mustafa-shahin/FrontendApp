@@ -102,7 +102,6 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
       label: folder.name,
     })) || [];
 
-  // Enhanced form fields with folder selection
   const formFields = [
     ...getFileUploadFormFields(),
     {

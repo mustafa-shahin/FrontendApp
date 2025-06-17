@@ -4,9 +4,9 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { useFiles, useUploadFile } from '../../hooks/useFiles';
-import { FileType, UserDto } from '@frontend-app/types';
+import { UserDto, PagedResult } from '@frontend-app/types';
 import { fileService } from '../../services/file.service';
-
+import { FileType, FileDto } from '../../types';
 interface AvatarSelectorProps {
   selectedFileId: number | null;
   onFileSelect: (fileId: number | null) => void;
@@ -22,16 +22,16 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const { data: filesData = [], isLoading } = useFiles(
-    1,
-    20,
-    undefined,
-    searchTerm,
-    FileType.Image
-  );
+  const { data: filesResponse = { items: [], totalCount: 0 }, isLoading } =
+    useFiles(1, 20, undefined, searchTerm, FileType.Image) as {
+      data?: PagedResult<FileDto>;
+      isLoading: boolean;
+    };
+
+  const filesData = filesResponse?.items || [];
 
   const uploadMutation = useUploadFile({
-    onSuccess: (data) => {
+    onSuccess: (data: FileDto) => {
       onFileSelect(data.id);
       setIsModalOpen(false);
       setSelectedFile(null);
@@ -175,7 +175,7 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
                 </div>
               ) : (
                 <div className="grid grid-cols-4 gap-4 max-h-64 overflow-y-auto">
-                  {filesData.map((file) => (
+                  {filesData.map((file: FileDto) => (
                     <div
                       key={file.id}
                       className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
@@ -208,7 +208,7 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({
                 </div>
               )}
 
-              {filesData?.items.length === 0 && !isLoading && (
+              {filesData.length === 0 && !isLoading && (
                 <p className="text-center text-gray-500 dark:text-gray-400 py-8">
                   No images found. Upload a new image above.
                 </p>

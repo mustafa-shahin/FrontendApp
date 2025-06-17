@@ -209,7 +209,7 @@ export const UserModal: React.FC<UserModalProps> = ({
       id: 'addresses',
       label: 'Addresses',
       icon: 'map-marker-alt',
-      badge: addresses.length,
+      badge: addresses.length > 0 ? addresses.length : undefined,
       content: (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
@@ -250,7 +250,7 @@ export const UserModal: React.FC<UserModalProps> = ({
       id: 'contacts',
       label: 'Contact Details',
       icon: 'phone',
-      badge: contactDetails.length,
+      badge: contactDetails.length > 0 ? contactDetails.length : undefined,
       content: (
         <div className="space-y-6">
           <div className="flex justify-between items-center">

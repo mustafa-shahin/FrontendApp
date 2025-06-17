@@ -20,7 +20,6 @@ export function FormGenerator<T extends FieldValues>({
   const {
     register,
     formState: { errors },
-    watch,
     setValue,
   } = form;
 
@@ -103,7 +102,11 @@ export function FormGenerator<T extends FieldValues>({
             multiple={field.multiple}
             {...commonProps}
             onFileChange={(files) => {
-              setValue(fieldName, field.multiple ? files : files?.[0] || null);
+              if (field.multiple) {
+                setValue(fieldName, files as any);
+              } else {
+                setValue(fieldName, (files?.[0] || null) as any);
+              }
             }}
           />
         );

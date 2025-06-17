@@ -48,10 +48,17 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
           {/* User menu */}
           <div className="flex items-center space-x-3">
-            {user?.avatarUrl ? (
+            {user?.pictureFileId ? (
               <img
-                src={fileService.getAvatarUrl(user)?.toString()}
-                alt={user.fullName}
+                src={
+                  user.pictureFileId
+                    ? fileService.getImageUrl(
+                        user.pictureFileId,
+                        'thumbnail'
+                      ) || undefined
+                    : undefined
+                }
+                alt={user.firstName + '' + user.lastName}
                 className="w-8 h-8 rounded-full"
               />
             ) : (

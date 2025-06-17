@@ -4,7 +4,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { LoginPage } from '../pages/LoginPage';
 import { Dashboard } from '../pages/Dashboard';
+import { Users } from '../pages/Users';
+import { Files } from '../pages/Files';
+import { Folders } from '../pages/Folders';
 import { NotFound } from '../pages/NotFound';
+
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
@@ -58,6 +62,33 @@ export function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <Users />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/files"
+          element={
+            <ProtectedRoute>
+              <Files />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/folders"
+          element={
+            <ProtectedRoute>
+              <Folders />
             </ProtectedRoute>
           }
         />

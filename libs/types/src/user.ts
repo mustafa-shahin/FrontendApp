@@ -52,7 +52,6 @@ export interface UpdateUserDto {
   isActive: boolean;
   pictureFileId: number | null;
   role: UserRole;
-  preferences: { [key: string]: unknown };
   addresses: UpdateAddressDto[];
   contactDetails: UpdateContactDetailsDto[];
   picture: File | null;

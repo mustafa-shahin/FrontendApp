@@ -19,16 +19,13 @@ export interface UserDto {
   isActive: boolean;
   isLocked: boolean;
   lastLoginAt: string | null;
-  avatarFileId: number | null;
-  avatarUrl: string | null;
-  timezone: string | null;
-  language: string | null;
+  pictureFileId: number | null;
+  pictureUrl: string | null;
   emailVerifiedAt: string | null;
   createdAt: string;
   updatedAt: string;
   role: UserRole;
   roleName: string;
-  preferences: { [key: string]: unknown };
   addresses: AddressDto[];
   contactDetails: ContactDetailsDto[];
 }
@@ -40,14 +37,11 @@ export interface CreateUserDto {
   firstName: string;
   lastName: string;
   isActive: boolean;
-  avatarFileId: number | null;
-  timezone: string | null;
-  language: string | null;
+  pictureFileId: number | null;
   role: UserRole;
-  preferences: { [key: string]: unknown };
   addresses: CreateAddressDto[];
   contactDetails: CreateContactDetailsDto[];
-  avatar: File | null;
+  picture: File | null;
 }
 
 export interface UpdateUserDto {
@@ -56,14 +50,12 @@ export interface UpdateUserDto {
   firstName: string;
   lastName: string;
   isActive: boolean;
-  avatarFileId: number | null;
-  timezone: string | null;
-  language: string | null;
+  pictureFileId: number | null;
   role: UserRole;
   preferences: { [key: string]: unknown };
   addresses: UpdateAddressDto[];
   contactDetails: UpdateContactDetailsDto[];
-  avatar: File | null;
+  picture: File | null;
 }
 
 export interface ChangePasswordDto {
